@@ -89,4 +89,12 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
         ) as Int
         set(value) = savePrefValue(PLAYLIST_ORDER, value)
 
+    var deviceId: String
+        get() = getSharedPrefsValue(
+            DEVICE_ID,
+            String()::class.java,
+            defaultInt = 0
+        ) as String
+        set(value) = savePrefValue(DEVICE_ID, value)
+
 }

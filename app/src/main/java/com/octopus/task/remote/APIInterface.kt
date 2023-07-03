@@ -1,10 +1,23 @@
 package com.octopus.task.remote
 
+import com.octopus.task.model.ResponseModel
+import com.octopus.task.model.SpecifyBodyModel
+import com.octopus.task.model.SpecifyResponseModel
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+
 interface APIInterface {
-   /* @POST("register")
-    suspend fun getRegisterInfo(@Body registerBody: RegisterBody): Response<RegisterResponse?>?
+    @POST("screen/{uuid}")
+    suspend fun specify(
+        @Path("uuid") uuid: String,
+        @Body body: SpecifyBodyModel
+    ): Response<SpecifyResponseModel?>?
 
-    @POST("check_in")
-    fun getCheckInInfo(@Body checkInBody: CheckInBody): Call<CheckInResult?>?*/
-
+    @GET("screen/{uuid}")
+    suspend fun getPlaylist(
+        @Path("uuid") uuid: String
+    ): Response<ResponseModel?>?
 }
