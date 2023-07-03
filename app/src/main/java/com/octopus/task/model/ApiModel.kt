@@ -1,5 +1,8 @@
 package com.octopus.task.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 data class ResponseModel(
     val params: List<ParamsItem>?
 )
@@ -18,12 +21,15 @@ data class Sync(
     val data: List<DataItem>?
 )
 
+@Entity(tableName = "playlistdb")
 data class DataItem(
     val nth: Int?,
     val type: String?,
     val name: String?,
     val start_date: Any?,
-    val end_date: Any?
+    val end_date: Any?,
+    @PrimaryKey(autoGenerate = true)
+    var primaryId: Int? = null
 )
 
 data class SpecifyBodyModel(

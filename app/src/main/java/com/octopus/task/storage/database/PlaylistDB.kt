@@ -2,7 +2,6 @@ package com.octopus.task.storage.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.octopus.task.model.PlaylistModel
 import com.octopus.task.storage.dao.PlaylistDAO
 
 @Database(entities = [PlaylistModel::class], version = 1)

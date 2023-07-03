@@ -1,6 +1,5 @@
 package com.octopus.task.repo
 
-import com.octopus.task.model.PlaylistModel
 import com.octopus.task.model.SpecifyBodyModel
 import com.octopus.task.utils.Resource
 

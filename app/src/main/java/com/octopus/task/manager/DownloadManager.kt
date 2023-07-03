@@ -3,12 +3,14 @@ package com.octopus.task.manager
 import android.content.Context
 import com.octopus.task.utils.printErrorLog
 import com.octopus.task.utils.printLog
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
+import javax.inject.Inject
 
-class DownloadManager(val context: Context) {
-    fun downloadMedia(urlString: String?, mediaName: String?, fileSize: Long?): DownloadResult {
+class DownloadManager @Inject constructor(@ApplicationContext val context: Context) {
+    fun downloadMedia(urlString: String?, mediaName: String?): DownloadResult {
         try {
             val url = URL(urlString)
             val urlConnection: URLConnection = url.openConnection()
@@ -44,12 +46,7 @@ class DownloadManager(val context: Context) {
             output.close()
             input.close()
             printErrorLog("Download process done")
-            return if (fileSize == current) {
-                DownloadResult.Successful
-            } else {
-                DownloadResult.SizeNotMatch
-            }
-
+            return DownloadResult.Successful
         } catch (e: Exception) {
             printErrorLog("Download exception: $e")
             return DownloadResult.Exception
@@ -61,7 +58,6 @@ class DownloadManager(val context: Context) {
 
     sealed class DownloadResult {
         object Successful : DownloadResult()
-        object SizeNotMatch : DownloadResult()
         object Exception : DownloadResult()
     }
 }

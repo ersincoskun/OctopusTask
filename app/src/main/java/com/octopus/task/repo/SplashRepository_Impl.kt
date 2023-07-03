@@ -2,7 +2,7 @@ package com.octopus.task.repo
 
 import android.content.Context
 import com.octopus.task.helpers.PreferencesHelper
-import com.octopus.task.model.PlaylistModel
+import com.octopus.task.model.DataItem
 import com.octopus.task.model.SpecifyBodyModel
 import com.octopus.task.remote.ApiInterface
 import com.octopus.task.storage.dao.PlaylistDAO
@@ -36,7 +36,7 @@ class SplashRepository_Impl @Inject constructor(
                 }
             } ?: kotlin.run {
                 printErrorLog("null response")
-                return@run Resource.Error("empty response")
+                return@run Resource.Empty
             }
         } catch (e: Exception) {
             printErrorLog("request catch $e")
@@ -71,11 +71,11 @@ class SplashRepository_Impl @Inject constructor(
         }
     }
 
-    override suspend fun getPlaylistFromDb(): List<PlaylistModel> {
+    override suspend fun getPlaylistFromDb(): List<DataItem> {
         return playlistDao.getPlaylist()
     }
 
-    override suspend fun savePlaylistToDb(playlist: List<PlaylistModel>) {
+    override suspend fun savePlaylistToDb(playlist: List<DataItem>) {
         playlistDao.insertPlaylist(playlist)
     }
 
