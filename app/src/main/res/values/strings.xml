@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Octopus Task</string>
+    <string name="default_error_text">Bir Hata Meydana Geldi</string>
+</resources>
