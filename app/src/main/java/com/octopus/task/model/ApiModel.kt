@@ -22,8 +22,8 @@ data class DataItem(
     val nth: Int?,
     val type: String?,
     val name: String?,
-    val start_date: Any?,  // Eğer tarih formatı biliniyorsa, burada uygun bir tarih tipi kullanılabilir
-    val end_date: Any?  // Eğer tarih formatı biliniyorsa, burada uygun bir tarih tipi kullanılabilir
+    val start_date: Any?,
+    val end_date: Any?
 )
 
 data class SpecifyBodyModel(

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.model.PlaylistModel
+import com.octopus.task.repo.SplashRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -14,6 +15,7 @@ import kotlin.random.Random
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     val preferencesHelper: PreferencesHelper,
+    private val splashRepository: SplashRepository
 ) : ViewModel() {
 
     private lateinit var job: Job

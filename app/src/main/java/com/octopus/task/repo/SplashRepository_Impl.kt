@@ -4,7 +4,7 @@ import android.content.Context
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.model.PlaylistModel
 import com.octopus.task.model.SpecifyBodyModel
-import com.octopus.task.remote.APIInterface
+import com.octopus.task.remote.ApiInterface
 import com.octopus.task.storage.dao.PlaylistDAO
 import com.octopus.task.utils.Resource
 import com.octopus.task.utils.printErrorLog
@@ -13,13 +13,13 @@ import javax.inject.Inject
 
 class SplashRepository_Impl @Inject constructor(
     @ApplicationContext val context: Context,
-    val retrofitAPI: APIInterface,
+    val retrofitApi: ApiInterface,
     val playlistDao: PlaylistDAO,
     val preferencesHelper: PreferencesHelper,
 ) : SplashRepository {
     override suspend fun getPlaylistFromApi(): Resource {
         return try {
-            val response = retrofitAPI.getPlaylist(preferencesHelper.deviceId)
+            val response = retrofitApi.getPlaylist(preferencesHelper.deviceId)
             printErrorLog("register response: $response")
             response?.let { safeResponse ->
                 if (safeResponse.isSuccessful) {
@@ -46,7 +46,7 @@ class SplashRepository_Impl @Inject constructor(
 
     override suspend fun specify(specifyBodyModel: SpecifyBodyModel): Resource {
         return try {
-            val response = retrofitAPI.specify(preferencesHelper.deviceId,specifyBodyModel)
+            val response = retrofitApi.specify(preferencesHelper.deviceId,specifyBodyModel)
             printErrorLog("register response: $response")
             response?.let { safeResponse ->
                 if (safeResponse.isSuccessful) {

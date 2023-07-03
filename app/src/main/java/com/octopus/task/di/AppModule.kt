@@ -3,7 +3,7 @@ package com.rubu.Play.di
 import android.content.Context
 import androidx.room.Room
 import com.octopus.task.helpers.PreferencesHelper
-import com.octopus.task.remote.APIInterface
+import com.octopus.task.remote.ApiInterface
 import com.octopus.task.repo.SplashRepository
 import com.octopus.task.repo.SplashRepository_Impl
 import com.octopus.task.storage.dao.PlaylistDAO
@@ -14,10 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
-import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
@@ -31,7 +28,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun injectRetrofitAPI(@ApplicationContext context: Context): APIInterface {
+    fun injectRetrofitAPI(@ApplicationContext context: Context): ApiInterface {
         val okhttp = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
@@ -46,14 +43,14 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .client(okhttp)
             .build()
-            .create(APIInterface::class.java)
+            .create(ApiInterface::class.java)
     }
 
     @Singleton
     @Provides
     fun SplashRepositoryProvider(
         @ApplicationContext context: Context,
-        retrofitAPI: APIInterface,
+        retrofitAPI: ApiInterface,
         playlistDao: PlaylistDAO,
         preferencesHelper: PreferencesHelper,
     ): SplashRepository = SplashRepository_Impl(

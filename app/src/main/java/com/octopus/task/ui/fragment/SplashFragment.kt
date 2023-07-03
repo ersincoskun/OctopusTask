@@ -1,4 +1,4 @@
-package com.octopus.task.ui
+package com.octopus.task.ui.fragment
 
 import com.octopus.task.databinding.FragmentSplashBinding
 import com.octopus.task.base.BaseFragment
