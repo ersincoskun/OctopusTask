@@ -8,7 +8,7 @@ import com.octopus.task.utils.Resource
 interface CommonRepository {
     suspend fun getPlaylistFromDb(): List<DataItem>
     suspend fun specify(specifyBodyModel: SpecifyBodyModel):Resource
-    suspend fun getPlaylistFromApi(): Resource
+    suspend fun getPlaylistFromServer(): Resource
     suspend fun deletePlaylistFromDB()
     suspend fun insertPlaylistToDb(playlist: List<DataItem>)
 }

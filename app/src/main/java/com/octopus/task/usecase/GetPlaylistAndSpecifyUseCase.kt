@@ -22,7 +22,7 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
 ) {
 
     private suspend fun getPlayList() {
-        val resource = commonRepository.getPlaylistFromApi()
+        val resource = commonRepository.getPlaylistFromServer()
         if (resource is Resource.Success<*>) {
             val response = resource.data as ResponseModel
             response.params?.first()?.sync?.data?.let { safeDataList ->

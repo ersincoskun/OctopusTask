@@ -17,7 +17,7 @@ class CommonRepository_Impl @Inject constructor(
     val playlistDao: PlaylistDAO,
     val preferencesHelper: PreferencesHelper,
 ) : CommonRepository {
-    override suspend fun getPlaylistFromApi(): Resource {
+    override suspend fun getPlaylistFromServer(): Resource {
         return try {
             val response = retrofitApi.getPlaylist(preferencesHelper.deviceId)
             printErrorLog("register response: $response")

@@ -22,19 +22,32 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         super.subLivData()
         viewModel.isReadyToStart.observe(viewLifecycleOwner) { isReadyToStart ->
             if (isReadyToStart) {
-                binding.pbSplash.remove()
+                if (binding.pbSplash.isVisible) binding.pbSplash.remove()
+                if (binding.tvId.isVisible) binding.tvId.remove()
                 viewModel.stopRequestLoop()
                 //navigate to media show fragment
             } else {
                 if (!binding.tvId.isVisible) binding.tvId.show()
             }
         }
+
+        viewModel.isTherePlaylist.observe(viewLifecycleOwner) { isTherePlaylist ->
+            if (isTherePlaylist) {
+                //navigateToMediaShow
+            } else {
+                viewModel.startRequestLoop()
+            }
+        }
     }
 
     override fun onLayoutReady() {
         super.onLayoutReady()
-        if (preferencesHelper.deviceId.isEmpty()) preferencesHelper.deviceId = viewModel.generateAlphaNumericId()
+        if (preferencesHelper.deviceId.isEmpty()) {
+            preferencesHelper.deviceId = viewModel.generateAlphaNumericId()
+            viewModel.startRequestLoop(isMustDeletePlaylist = true)
+        } else {
+            viewModel.checkIsTherePlaylist()
+        }
         binding.tvId.text = preferencesHelper.deviceId
-        viewModel.startRequestLoop()
     }
 }
