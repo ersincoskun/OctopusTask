@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.octopus.task.helpers.PreferencesHelper
+import com.octopus.task.model.DataItem
 import com.octopus.task.repo.SplashRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +22,8 @@ class MediaShowViewModel
     private val splashRepository: SplashRepository
 ) : ViewModel() {
 
-    private val _playlist = MutableLiveData<List<PlaylistModel>>()
-    val playlist: LiveData<List<PlaylistModel>>
+    private val _playlist = MutableLiveData<List<DataItem>>()
+    val playlist: LiveData<List<DataItem>>
         get() = _playlist
 
     fun getPlaylistFromDb() {

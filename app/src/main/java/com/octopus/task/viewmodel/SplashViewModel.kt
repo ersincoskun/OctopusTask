@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.model.DataItem
 import com.octopus.task.repo.SplashRepository
+import com.octopus.task.usecase.GetPlaylistAndSpecifyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -15,20 +16,16 @@ import kotlin.random.Random
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     val preferencesHelper: PreferencesHelper,
-    private val splashRepository: SplashRepository
+    private val splashRepository: SplashRepository,
+    private val getPlaylistAndSpecifyUseCase: GetPlaylistAndSpecifyUseCase
 ) : ViewModel() {
 
     private lateinit var job: Job
-    private val _playlist = MutableLiveData<List<DataItem>>()
-    val playlist: LiveData<List<DataItem>>
-        get() = _playlist
 
-    fun getPlaylistFromDb() {
+    fun checkIsReadyToPlay() {
         viewModelScope.launch(Dispatchers.IO) {
-            val playlist =
-                withContext(Dispatchers.Main) {
+           getPlaylistAndSpecifyUseCase()
 
-                }
         }
     }
 

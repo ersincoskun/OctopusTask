@@ -115,7 +115,12 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         return fileNameList
     }
 
-    suspend operator fun invoke() = withContext(Dispatchers.IO) {
+    suspend operator fun invoke(): UseCaseResult = withContext(Dispatchers.IO) {
         getPlayList()
+        UseCaseResult.Success
     }
+}
+
+enum class UseCaseResult {
+    Success
 }
