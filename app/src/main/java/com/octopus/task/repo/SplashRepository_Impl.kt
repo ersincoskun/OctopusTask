@@ -75,7 +75,7 @@ class SplashRepository_Impl @Inject constructor(
         return playlistDao.getPlaylist()
     }
 
-    override suspend fun savePlaylistToDb(playlist: List<DataItem>) {
+    override suspend fun insertPlaylistToDb(playlist: List<DataItem>) {
         playlistDao.insertPlaylist(playlist)
     }
 

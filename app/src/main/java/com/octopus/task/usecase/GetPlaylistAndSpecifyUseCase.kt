@@ -7,7 +7,6 @@ import com.octopus.task.model.DataItem
 import com.octopus.task.model.ResponseModel
 import com.octopus.task.model.SpecifyBodyModel
 import com.octopus.task.repo.SplashRepository
-import com.octopus.task.storage.dao.PlaylistDAO
 import com.octopus.task.utils.Resource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,6 @@ import javax.inject.Inject
 class GetPlaylistAndSpecifyUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val splashRepository: SplashRepository,
-    private val playlistDao: PlaylistDAO,
     private val downloadManager: DownloadManager
 ) {
 
@@ -98,8 +96,8 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
     }
 
     private suspend fun updateDbData(dataListForInsert: List<DataItem>) {
-        playlistDao.deletePlaylist()
-        playlistDao.insertPlaylist(dataListForInsert)
+        splashRepository.deletePlaylistFromDB()
+        splashRepository.insertPlaylistToDb(dataListForInsert)
     }
 
     private fun getDownloadedFiles(context: Context): List<String> {
