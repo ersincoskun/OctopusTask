@@ -62,18 +62,19 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
                 if (!isDownloaded) mustDownloadList.add(dataItem)
             }
         }
-        if (mustDownloadList.isNotEmpty()) downloadMedias(mustDownloadList)
+        if (mustDownloadList.isNotEmpty()) downloadMedias(mustDownloadList, dataItemList)
         else updateDbData(dataItemList)
     }
 
-    private suspend fun downloadMedias(dataItemList: List<DataItem>) {
+    private suspend fun downloadMedias(mustDownloadList: List<DataItem>, dataItemList: List<DataItem>) {
         val didNotDownloadedList = mutableListOf<DataItem>()
-        val dataItem = dataItemList[currentDownloadIndex]
+        val dataItem = mustDownloadList[currentDownloadIndex]
         currentDownloadIndex++
         suspend fun goNextDownload() {
             printErrorLog("currentDownloadedIndex: $currentDownloadIndex list size: ${dataItemList.size}")
-            if (currentDownloadIndex < dataItemList.size) {
+            if (currentDownloadIndex < mustDownloadList.size) {
                 downloadMedias(
+                    mustDownloadList,
                     dataItemList
                 )
             } else {
@@ -115,23 +116,6 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         printErrorLog("inserted to db list: $dataListForInsert")
         commonRepository.deletePlaylistFromDB()
         commonRepository.insertPlaylistToDb(dataListForInsert)
-        getDownloadedFiles(context).forEach { downloadedFile ->
-            var flag = false
-            dataListForInsert.forEach { dataListItem ->
-                if (downloadedFile == dataListItem.name) flag = true
-            }
-            if (!flag) deleteFile(downloadedFile)
-        }
-    }
-
-    private fun deleteFile(fileName: String) {
-        val file = File(context.filesDir, "MediaFiles/$fileName")
-        val fileDeleted = file.delete()
-        if (!fileDeleted) {
-            printErrorLog("file not Deleted :$fileName")
-        } else {
-            printErrorLog("file Deleted :$fileName")
-        }
     }
 
     private fun getDownloadedFiles(context: Context): List<String> {

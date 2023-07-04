@@ -7,12 +7,8 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.BitmapImageViewTarget
-import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.octopus.task.base.BaseFragment
 import com.octopus.task.databinding.FragmentMediaShowBinding
 import com.octopus.task.helpers.PreferencesHelper
@@ -37,7 +33,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
     override fun subLivData() {
         super.subLivData()
         mViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
-            printErrorLog("playlist order: ${preferencesHelper.playlistOrder} video order: ${preferencesHelper.videoOrder}")
+            printErrorLog("playlist order: ${preferencesHelper.playlistOrder}")
             printErrorLog("playlist: $playlist")
             val currentItem = playlist[preferencesHelper.playlistOrder]
             printErrorLog("current item: $currentItem")
@@ -73,7 +69,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             val videoCount = playlist.count { it.type == VIDEO_TYPE }
             binding.playerView.show()
             binding.imageView.remove()
-            prepareExoPlayer(playlist)
+            prepareExoPlayer(currentItem)
             val retriever = MediaMetadataRetriever()
             val videoPath = requireContext().filesDir.toString() + "/MediaFiles/${currentItem.name}"
             retriever.setDataSource(videoPath)
@@ -84,11 +80,6 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
                     preferencesHelper.playlistOrder = 0
                 } else {
                     preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
-                }
-                if (preferencesHelper.videoOrder + 1 >= videoCount) {
-                    preferencesHelper.videoOrder = 0
-                } else {
-                    preferencesHelper.videoOrder = preferencesHelper.videoOrder + 1
                 }
                 mViewModel.getPlaylistFromDb()
             }, timeInMilliSec ?: (10 * 1000))
@@ -110,34 +101,18 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
         }
     }
 
-    private fun playVideoByOrder() {
-        mExoPlayer?.seekTo(preferencesHelper.videoOrder, C.TIME_UNSET)
-        mExoPlayer?.play()
-    }
-
-    private fun prepareExoPlayer(playlist: List<DataItem>) {
+    private fun prepareExoPlayer(currentItem: DataItem) {
         context?.let { safeContext ->
             mExoPlayer = ExoPlayer.Builder(safeContext).build()
             mExoPlayer?.let { safeExoPlayer ->
                 binding.playerView.player = safeExoPlayer
-                val mediaItems = mutableListOf<MediaItem>()
-                playlist.forEach { playlistItem ->
-                    if (playlistItem.type == VIDEO_TYPE) {
-                        playlistItem.name?.let { safeName ->
-                            val file =
-                                File(requireContext().filesDir.toString() + "/MediaFiles/$safeName")
-                            val uri = Uri.fromFile(file)
-                            mediaItems.add(MediaItem.fromUri(uri))
-                        }
-                    }
-                }
-                val mediaSources = mediaItems.map {
-                    ProgressiveMediaSource.Factory(DefaultDataSource.Factory(requireContext())).createMediaSource(it)
-                }
-                val concatenatedSource = ConcatenatingMediaSource(*mediaSources.toTypedArray())
-                safeExoPlayer.setMediaSource(concatenatedSource)
+                val file =
+                    File(requireContext().filesDir.toString() + "/MediaFiles/${currentItem.name}")
+                val uri = Uri.fromFile(file)
+                val mediaItem = MediaItem.fromUri(uri)
+                safeExoPlayer.setMediaItem(mediaItem)
                 safeExoPlayer.prepare()
-                playVideoByOrder()
+                mExoPlayer?.playWhenReady = true
             }
         }
     }
