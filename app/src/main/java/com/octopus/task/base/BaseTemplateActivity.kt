@@ -1,6 +1,5 @@
 package com.octopus.task.base
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.LayoutInflater
@@ -18,7 +17,6 @@ abstract class BaseTemplateActivity<T : ViewBinding> : FragmentActivity() {
     private var vgRoot: ViewGroup? = null
 
     private var mBinding: T? = null
-    private var mIsRecreated: Boolean = false
 
     @CallSuper open fun createViews() {}
     @CallSuper open fun assignObjects() {}
@@ -35,13 +33,8 @@ abstract class BaseTemplateActivity<T : ViewBinding> : FragmentActivity() {
 
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mIsRecreated = savedInstanceState != null
-        if (mIsRecreated) {
-            restartApp()
-        } else {
             onCreated()
             initialize()
-        }
     }
 
     final override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -50,41 +43,29 @@ abstract class BaseTemplateActivity<T : ViewBinding> : FragmentActivity() {
 
     final override fun onStart() {
         super.onStart()
-        if (mIsRecreated.not()) {
-            onStarted()
-        }
+        onStarted()
     }
 
     final override fun onResume() {
         super.onResume()
-        if (mIsRecreated.not()) {
-            onResumed()
-        }
+        onResumed()
     }
 
     final override fun onPause() {
         super.onPause()
-        if (mIsRecreated.not()) {
-            onPaused()
-        }
+        onPaused()
     }
 
     final override fun onStop() {
         super.onStop()
-        if (mIsRecreated.not()) {
-            onStopped()
-        }
+        onStopped()
     }
 
     final override fun onDestroy() {
         super.onDestroy()
-        if (mIsRecreated.not()) {
-            onDestroyed()
-            mBinding = null
-        }
+        onDestroyed()
+        mBinding = null
     }
-
-    fun isRecreated() = mIsRecreated
 
     private fun initialize() {
         prepareBinding()
@@ -93,13 +74,6 @@ abstract class BaseTemplateActivity<T : ViewBinding> : FragmentActivity() {
         setListeners()
         prepareUI()
         listenOnLayoutReady()
-    }
-
-    private fun restartApp() {
-        baseContext.packageManager.getLaunchIntentForPackage(baseContext.packageName)?.let { intent ->
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-        }
     }
 
     private fun prepareBinding() {

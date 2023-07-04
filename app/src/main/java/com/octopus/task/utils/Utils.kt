@@ -1,7 +1,10 @@
 package com.octopus.task.utils
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
@@ -21,16 +24,13 @@ fun printErrorLog(logText: String) {
     if (IS_GENERAL_LOG_ENABLE) Log.e(QR_SCANNER_LOG_TAG, logText)
 }
 
-fun setWorkManager(pref: PreferencesHelper, context: Context) {
+fun setWorkManager(context: Context) {
     val uploadWorkRequest: OneTimeWorkRequest =
         OneTimeWorkRequestBuilder<CheckPlaylistUpdateWorker>()
             .setInitialDelay(10, TimeUnit.SECONDS)
             .addTag("check_update_worker")
             .build()
-    //pref.setCurrentWorkId(uploadWorkRequest.id.toString())
     WorkManager
         .getInstance(context)
         .enqueueUniqueWork(UNIQUE_WORK_ID, ExistingWorkPolicy.REPLACE, uploadWorkRequest)
-    //pref.setIsStartedWorkManager(true)
 }
-

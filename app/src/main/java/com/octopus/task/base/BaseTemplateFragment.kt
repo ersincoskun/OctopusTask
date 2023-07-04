@@ -17,23 +17,17 @@ open class BaseTemplateFragment<VB : ViewBinding?>:Fragment() {
 
     private var vgRoot: ViewGroup? = null
     private var vgFragmentContainer: ViewGroup? = null
-    private var mIsActivityRecreated = false
 
     final override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mIsActivityRecreated = (activity as BaseActivity<*>).isRecreated()
         vgFragmentContainer = container
-        return if (mIsActivityRecreated.not()) {
-            onCreated()
-            onCreateWithSavedInstance(savedInstanceState)
-            initialize()
-            vgRoot
-        } else {
-            null
-        }
+        onCreated()
+        onCreateWithSavedInstance(savedInstanceState)
+        initialize()
+        return vgRoot
     }
 
     private fun prepareBinding() {
@@ -91,37 +85,27 @@ open class BaseTemplateFragment<VB : ViewBinding?>:Fragment() {
 
     final override fun onStart() {
         super.onStart()
-        if (mIsActivityRecreated.not()) {
-            onStarted()
-        }
+        onStarted()
     }
 
     final override fun onResume() {
         super.onResume()
-        if (mIsActivityRecreated.not()) {
-            onResumed()
-        }
+        onResumed()
     }
 
     final override fun onPause() {
         super.onPause()
-        if (mIsActivityRecreated.not()) {
-            onPaused()
-        }
+        onPaused()
     }
 
     final override fun onStop() {
         super.onStop()
-        if (mIsActivityRecreated.not()) {
-            onStopped()
-        }
+        onStopped()
     }
 
     final override fun onDestroyView() {
         super.onDestroyView()
-        if (mIsActivityRecreated.not()) {
-            onDestroyed()
-        }
+        onDestroyed()
     }
 
     final override fun onDestroy() {

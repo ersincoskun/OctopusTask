@@ -14,6 +14,7 @@ import com.octopus.task.base.BaseFragment
 import com.octopus.task.databinding.FragmentSplashBinding
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.utils.remove
+import com.octopus.task.utils.setFullScreen
 import com.octopus.task.utils.setWorkManager
 import com.octopus.task.utils.show
 import com.octopus.task.viewmodel.SplashViewModel
@@ -34,7 +35,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
                 if (binding.pbSplash.isVisible) binding.pbSplash.remove()
                 if (binding.tvId.isVisible) binding.tvId.remove()
                 navigate(MediaShowFragment())
-                setWorkManager(preferencesHelper, requireContext())
+                setWorkManager(requireContext())
             } else {
                 if (!binding.tvId.isVisible) binding.tvId.show()
                 mViewModel.sendRequest()
@@ -44,7 +45,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         mViewModel.isTherePlaylist.observe(viewLifecycleOwner) { isTherePlaylist ->
             if (isTherePlaylist) {
                 navigate(MediaShowFragment())
-                setWorkManager(preferencesHelper, requireContext())
+                setWorkManager(requireContext())
             } else {
                 mViewModel.sendRequest()
             }
@@ -60,6 +61,11 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
             mViewModel.checkIsTherePlaylist()
         }
         binding.tvId.text = preferencesHelper.deviceId
+    }
+
+    override fun onResumed() {
+        super.onResumed()
+        requireActivity().setFullScreen()
     }
 
 }

@@ -23,7 +23,6 @@ class CheckPlaylistUpdateWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val getPlaylistAndSpecifyUseCase: GetPlaylistAndSpecifyUseCase,
-    private val preferencesHelper: PreferencesHelper
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -31,7 +30,7 @@ class CheckPlaylistUpdateWorker @AssistedInject constructor(
         withContext(Dispatchers.IO) {
             //this result for wait to end of getPlaylistAndSpecifyUseCase processes.
             val useCaseResult = getPlaylistAndSpecifyUseCase()
-            if (useCaseResult == UseCaseResult.Success) setWorkManager(preferencesHelper, applicationContext)
+            if (useCaseResult == UseCaseResult.Success) setWorkManager(applicationContext)
         }
 
         return Result.success()

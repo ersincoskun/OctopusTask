@@ -16,6 +16,7 @@ import com.octopus.task.model.DataItem
 import com.octopus.task.utils.Constants.VIDEO_TYPE
 import com.octopus.task.utils.printErrorLog
 import com.octopus.task.utils.remove
+import com.octopus.task.utils.setFullScreen
 import com.octopus.task.utils.show
 import com.octopus.task.viewmodel.MediaShowViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,6 +58,11 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
     override fun onLayoutReady() {
         super.onLayoutReady()
         mViewModel.getPlaylistFromDb()
+    }
+
+    override fun onResumed() {
+        super.onResumed()
+        requireActivity().setFullScreen()
     }
 
     override fun onStopped() {
