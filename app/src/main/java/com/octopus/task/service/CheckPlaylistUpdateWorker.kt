@@ -1,0 +1,29 @@
+package com.octopus.task.service
+
+import android.content.Context
+import androidx.hilt.work.HiltWorker
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import com.octopus.task.helpers.PreferencesHelper
+import com.octopus.task.usecase.GetPlaylistAndSpecifyUseCase
+import com.octopus.task.utils.printErrorLog
+import com.octopus.task.utils.setWorkManager
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+
+@HiltWorker
+class CheckPlaylistUpdateWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val getPlaylistAndSpecifyUseCase: GetPlaylistAndSpecifyUseCase,
+    private val preferencesHelper: PreferencesHelper
+) : CoroutineWorker(appContext, workerParams) {
+
+    override suspend fun doWork(): Result {
+        printErrorLog("worker ran")
+        getPlaylistAndSpecifyUseCase()
+        setWorkManager(preferencesHelper, applicationContext)
+        return Result.success()
+    }
+
+}

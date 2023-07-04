@@ -1,38 +1,27 @@
-package com.octopus.task.service
+package com.octopus.task.usecase
 
 import android.content.Context
 import android.util.Log
-import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
 import com.octopus.task.manager.DownloadManager
 import com.octopus.task.model.DataItem
 import com.octopus.task.model.ResponseModel
+import com.octopus.task.model.SpecifyBodyModel
 import com.octopus.task.repo.SplashRepository
 import com.octopus.task.storage.dao.PlaylistDAO
 import com.octopus.task.utils.Resource
-import com.octopus.task.utils.printErrorLog
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
+import javax.inject.Inject
 
-@HiltWorker
-class GetDataFromApiWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters,
+class GetPlaylistAndSpecifyUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val splashRepository: SplashRepository,
     private val playlistDao: PlaylistDAO,
     private val downloadManager: DownloadManager
-) : CoroutineWorker(appContext, workerParams) {
-
-    override suspend fun doWork(): Result {
-        printErrorLog("worker ran")
-        getPlayList()
-        return Result.success()
-    }
+) {
 
     private suspend fun getPlayList() {
         val resource = splashRepository.getPlaylistFromApi()
@@ -40,6 +29,9 @@ class GetDataFromApiWorker @AssistedInject constructor(
             val response = resource.data as ResponseModel
             response.params?.first()?.sync?.data?.let { safeDataList ->
                 handleGetPlaylistResponse(safeDataList)
+                response.params.first().sync?.command_id?.let { safeCommandId ->
+                    splashRepository.specify(SpecifyBodyModel(safeCommandId.toString()))
+                }
             }
         }
     }
@@ -48,9 +40,9 @@ class GetDataFromApiWorker @AssistedInject constructor(
         val mustDownloadList = mutableListOf<DataItem>()
         dataItemList.forEach { dataItem ->
             var isDownloaded = false
-            if (getDownloadedFiles(applicationContext).isEmpty()) mustDownloadList.add(dataItem)
+            if (getDownloadedFiles(context).isEmpty()) mustDownloadList.add(dataItem)
             else {
-                getDownloadedFiles(applicationContext).forEach { downloadedFile ->
+                getDownloadedFiles(context).forEach { downloadedFile ->
                     if (dataItem.name == downloadedFile) isDownloaded = true
                 }
                 if (!isDownloaded) mustDownloadList.add(dataItem)
@@ -121,5 +113,9 @@ class GetDataFromApiWorker @AssistedInject constructor(
             }
         }
         return fileNameList
+    }
+
+    suspend operator fun invoke() = withContext(Dispatchers.IO) {
+        getPlayList()
     }
 }
