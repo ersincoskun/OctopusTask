@@ -37,7 +37,7 @@ class MediaShowViewModel
 
     fun isItemInInterval(startDateString: String, endDateString: String): Boolean {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+        dateFormat.timeZone =  TimeZone.getDefault()
         val startDate = dateFormat.parse(startDateString)
         val endDate = dateFormat.parse(endDateString)
         val startCalendar = Calendar.getInstance()

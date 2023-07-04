@@ -41,8 +41,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             printErrorLog("playlist: $playlist")
             val currentItem = playlist[preferencesHelper.playlistOrder]
             printErrorLog("current item: $currentItem")
-            playMedia(currentItem, playlist)
-            /*currentItem.end_date?.let { safeEndDate ->
+            currentItem.end_date?.let { safeEndDate ->
                 currentItem.start_date?.let { safeStartDate ->
                     if (mViewModel.isItemInInterval(safeStartDate, safeEndDate)){
                         playMedia(currentItem, playlist)
@@ -55,7 +54,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
                 }
             } ?: kotlin.run {
                 playMedia(currentItem, playlist)
-            }*/
+            }
         }
     }
 
