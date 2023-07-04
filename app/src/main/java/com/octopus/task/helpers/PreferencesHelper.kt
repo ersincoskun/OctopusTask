@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.octopus.task.utils.Constants.PREF_NAME
+import com.octopus.task.utils.printErrorLog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -48,8 +49,8 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
             Float::class.java -> sharedPreferences.getFloat(key, defaultFloat)
             Boolean::class.java -> sharedPreferences.getBoolean(key, defaultBoolean)
             else -> {
-                println("out of type")
-                Log.e("TAG", "shared preferences out of type")
+                printErrorLog("out of type")
+                printErrorLog("shared preferences out of type")
                 null
             }
         }

@@ -72,7 +72,6 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
 
     private fun playMedia(currentItem: DataItem, playlist: List<DataItem>) {
         if (currentItem.type == VIDEO_TYPE) {
-            val videoCount = playlist.count { it.type == VIDEO_TYPE }
             binding.playerView.show()
             binding.imageView.remove()
             prepareExoPlayer(currentItem)

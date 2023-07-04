@@ -103,11 +103,11 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
             } catch (e: Exception) {
                 didNotDownloadedList.add(dataItem)
                 goNextDownload()
-                Log.e("ersincoskun", "my exception: " + e.localizedMessage)
+                printErrorLog("download error: $e")
             } catch (e: IOException) {
                 didNotDownloadedList.add(dataItem)
                 goNextDownload()
-                Log.e("ersincoskun", "my exception: " + e.localizedMessage)
+                printErrorLog("download error: $e")
             }
         }
     }
