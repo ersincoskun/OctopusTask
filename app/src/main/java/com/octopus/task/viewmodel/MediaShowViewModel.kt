@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MediaShowViewModel
 @Inject constructor(
-    val preferencesHelper: PreferencesHelper,
+    private val preferencesHelper: PreferencesHelper,
     private val commonRepository: CommonRepository
 ) : ViewModel() {
 
@@ -35,20 +35,17 @@ class MediaShowViewModel
         }
     }
 
-    private fun isPlaylistItemInInterval(startDateString: String, endDateString: String): Boolean {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    fun isItemInInterval(startDateString: String, endDateString: String): Boolean {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
         val startDate = dateFormat.parse(startDateString)
         val endDate = dateFormat.parse(endDateString)
         val startCalendar = Calendar.getInstance()
         val endCalendar = Calendar.getInstance()
-        return if (startDate != null && endDate != null) {
-            startCalendar.time = startDate
-            endCalendar.time = endDate
-            val calendar = Calendar.getInstance()
-            val currentTime = calendar.time
-            currentTime.after(startCalendar.time) && currentTime.before(endCalendar.time)
-        } else {
-            false
-        }
+        startCalendar.time = startDate
+        endCalendar.time = endDate
+        val calendar = Calendar.getInstance()
+        val currentTime = calendar.time
+        return currentTime.after(startCalendar.time) && currentTime.before(endCalendar.time)
     }
 }

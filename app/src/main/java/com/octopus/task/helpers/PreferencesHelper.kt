@@ -88,7 +88,7 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
         ) as Int
         set(value) = savePrefValue(PLAYLIST_ORDER, value)
 
-    var videoPlaylistOrder: Int
+    var videoOrder: Int
         get() = getSharedPrefsValue(
             VIDEO_PLAYLIST_ORDER,
             Int::class.java

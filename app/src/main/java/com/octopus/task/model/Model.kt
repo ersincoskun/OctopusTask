@@ -26,8 +26,8 @@ data class DataItem(
     val nth: Int?,
     val type: String?,
     val name: String?,
-    val start_date: Any?,
-    val end_date: Any?,
+    val start_date: String?,
+    val end_date: String?,
     @PrimaryKey(autoGenerate = true)
     var primaryId: Int? = null
 )

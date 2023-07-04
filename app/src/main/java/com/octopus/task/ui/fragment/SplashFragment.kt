@@ -16,26 +16,26 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     @Inject
     lateinit var preferencesHelper: PreferencesHelper
-    private val viewModel: SplashViewModel by viewModels()
+    private val mViewModel: SplashViewModel by viewModels()
 
     override fun subLivData() {
         super.subLivData()
-        viewModel.isReadyToStart.observe(viewLifecycleOwner) { isReadyToStart ->
+        mViewModel.isReadyToStart.observe(viewLifecycleOwner) { isReadyToStart ->
             if (isReadyToStart) {
                 if (binding.pbSplash.isVisible) binding.pbSplash.remove()
                 if (binding.tvId.isVisible) binding.tvId.remove()
-                viewModel.stopRequestLoop()
+                mViewModel.stopRequestLoop()
                 //navigate to media show fragment
             } else {
                 if (!binding.tvId.isVisible) binding.tvId.show()
             }
         }
 
-        viewModel.isTherePlaylist.observe(viewLifecycleOwner) { isTherePlaylist ->
+        mViewModel.isTherePlaylist.observe(viewLifecycleOwner) { isTherePlaylist ->
             if (isTherePlaylist) {
                 //navigateToMediaShow
             } else {
-                viewModel.startRequestLoop()
+                mViewModel.startRequestLoop()
             }
         }
     }
@@ -43,10 +43,10 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
     override fun onLayoutReady() {
         super.onLayoutReady()
         if (preferencesHelper.deviceId.isEmpty()) {
-            preferencesHelper.deviceId = viewModel.generateAlphaNumericId()
-            viewModel.startRequestLoop(isMustDeletePlaylist = true)
+            preferencesHelper.deviceId = mViewModel.generateAlphaNumericId()
+            mViewModel.startRequestLoop(isMustDeletePlaylist = true)
         } else {
-            viewModel.checkIsTherePlaylist()
+            mViewModel.checkIsTherePlaylist()
         }
         binding.tvId.text = preferencesHelper.deviceId
     }
