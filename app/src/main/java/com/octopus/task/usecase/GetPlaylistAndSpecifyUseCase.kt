@@ -3,11 +3,10 @@ package com.octopus.task.usecase
 import android.content.Context
 import android.util.Log
 import com.octopus.task.manager.DownloadManager
-import com.octopus.task.model.DataItem
-import com.octopus.task.model.ResponseModel
-import com.octopus.task.model.SpecifyBodyModel
+import com.octopus.task.model.*
 import com.octopus.task.repo.CommonRepository
 import com.octopus.task.utils.Resource
+import com.octopus.task.utils.printErrorLog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,9 +24,20 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         val resource = commonRepository.getPlaylistFromServer()
         if (resource is Resource.Success<*>) {
             val response = resource.data as ResponseModel
-            response.params?.first()?.sync?.data?.let { safeDataList ->
+            var sync: Sync? = null
+            var report: Report? = null
+            response.params?.forEach { paramsItem ->
+                paramsItem.report?.let { safeReport ->
+                    report = safeReport
+                }
+
+                paramsItem.sync?.let { safeSync ->
+                    sync = safeSync
+                }
+            }
+            sync?.data?.let { safeDataList ->
                 handleGetPlaylistResponse(safeDataList)
-                response.params.first().sync?.command_id?.let { safeCommandId ->
+                sync?.command_id?.let { safeCommandId ->
                     commonRepository.specify(SpecifyBodyModel(safeCommandId.toString()))
                 }
             }
@@ -56,6 +66,7 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         val dataItem = dataItemList[currentDownloadIndex]
         currentDownloadIndex++
         suspend fun goNextDownload() {
+            printErrorLog("currentDownloadedIndex: $currentDownloadIndex list size: ${dataItemList.size}")
             if (currentDownloadIndex < dataItemList.size) {
                 downloadMedias(
                     dataItemList

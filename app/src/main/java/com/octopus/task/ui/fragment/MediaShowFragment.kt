@@ -18,6 +18,7 @@ import com.octopus.task.databinding.FragmentMediaShowBinding
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.model.DataItem
 import com.octopus.task.utils.Constants.VIDEO_TYPE
+import com.octopus.task.utils.printErrorLog
 import com.octopus.task.utils.remove
 import com.octopus.task.utils.show
 import com.octopus.task.viewmodel.MediaShowViewModel
@@ -36,6 +37,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
     override fun subLivData() {
         super.subLivData()
         mViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
+            printErrorLog("playlist order: ${preferencesHelper.playlistOrder} video order: ${preferencesHelper.videoOrder}")
             val currentItem = playlist[preferencesHelper.playlistOrder]
             if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
                 preferencesHelper.playlistOrder = 0

@@ -20,53 +20,54 @@ class CommonRepository_Impl @Inject constructor(
     override suspend fun getPlaylistFromServer(): Resource {
         return try {
             val response = retrofitApi.getPlaylist(preferencesHelper.deviceId)
-            printErrorLog("register response: $response")
+            printErrorLog("get playlist response: $response")
             response?.let { safeResponse ->
                 if (safeResponse.isSuccessful) {
                     safeResponse.body()?.let { responseBody ->
-                        printErrorLog("register response body: $responseBody")
+                        printErrorLog("get playlist response body: $responseBody")
                         return Resource.Success(responseBody)
                     } ?: kotlin.run {
-                        printErrorLog("null body")
+                        printErrorLog("get playlist null body")
                         return@run Resource.Error("empty body")
                     }
                 } else {
-                    printErrorLog("response not successful")
+                    printErrorLog("get playlist response not successful")
                     return@let Resource.Error("response not successful")
                 }
             } ?: kotlin.run {
-                printErrorLog("null response")
+                printErrorLog("get playlist null response")
                 return@run Resource.Empty
             }
         } catch (e: Exception) {
-            printErrorLog("request catch $e")
+            printErrorLog("get playlist request catch $e")
             return Resource.Error("catch")
         }
     }
 
     override suspend fun specify(specifyBodyModel: SpecifyBodyModel): Resource {
         return try {
+            printErrorLog("specifyBodyModel: $specifyBodyModel")
             val response = retrofitApi.specify(preferencesHelper.deviceId,specifyBodyModel)
-            printErrorLog("register response: $response")
+            printErrorLog("specify response: $response")
             response?.let { safeResponse ->
                 if (safeResponse.isSuccessful) {
                     safeResponse.body()?.let { responseBody ->
-                        printErrorLog("register response body: $responseBody")
+                        printErrorLog("specify response body: $responseBody")
                         return Resource.Success(responseBody)
                     } ?: kotlin.run {
-                        printErrorLog("null body")
+                        printErrorLog("specify null body")
                         return@run Resource.Error("empty body")
                     }
                 } else {
-                    printErrorLog("response not successful")
+                    printErrorLog("specify response not successful")
                     return@let Resource.Error("response not successful")
                 }
             } ?: kotlin.run {
-                printErrorLog("null response")
+                printErrorLog("specify null response")
                 return@run Resource.Error("empty response")
             }
         } catch (e: Exception) {
-            printErrorLog("request catch $e")
+            printErrorLog("specify request catch $e")
             return Resource.Error("catch")
         }
     }

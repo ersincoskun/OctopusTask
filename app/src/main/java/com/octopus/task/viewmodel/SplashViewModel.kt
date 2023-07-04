@@ -20,8 +20,6 @@ class SplashViewModel @Inject constructor(
     private val getPlaylistAndSpecifyUseCase: GetPlaylistAndSpecifyUseCase
 ) : ViewModel() {
 
-    private lateinit var mJob: Job
-
     private val _isReadyToStart = MutableLiveData<Boolean>()
     val isReadyToStart: LiveData<Boolean>
         get() = _isReadyToStart
@@ -39,8 +37,12 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun getPlaylistFromServer() {
+     fun sendRequest(isMustDeletePlaylist: Boolean = false) {
+         viewModelScope.launch(Dispatchers.IO) {
+             if (isMustDeletePlaylist) commonRepository.deletePlaylistFromDB()
+         }
         viewModelScope.launch(Dispatchers.IO) {
+            delay(5000)
             val result = getPlaylistAndSpecifyUseCase()
             if (result == UseCaseResult.Success) {
                 val playlist = commonRepository.getPlaylistFromDb()
@@ -49,22 +51,6 @@ class SplashViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun startRequestLoop(isMustDeletePlaylist: Boolean = false) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (isMustDeletePlaylist) commonRepository.deletePlaylistFromDB()
-        }
-        mJob = viewModelScope.launch(Dispatchers.Main) {
-            while (isActive) {
-                delay(5 * 1000)
-                getPlaylistFromServer()
-            }
-        }
-    }
-
-    fun stopRequestLoop() {
-        if (this::mJob.isInitialized) mJob.cancel()
     }
 
     fun generateAlphaNumericId(): String {
