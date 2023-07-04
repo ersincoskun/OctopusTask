@@ -1,7 +1,15 @@
 package com.octopus.task.ui.fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import com.octopus.task.base.BaseFragment
 import com.octopus.task.databinding.FragmentSplashBinding
 import com.octopus.task.helpers.PreferencesHelper
@@ -53,4 +61,5 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         }
         binding.tvId.text = preferencesHelper.deviceId
     }
+
 }

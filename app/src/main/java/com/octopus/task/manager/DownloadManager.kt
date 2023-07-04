@@ -12,6 +12,7 @@ import javax.inject.Inject
 class DownloadManager @Inject constructor(@ApplicationContext val context: Context) {
     fun downloadMedia(urlString: String?, mediaName: String?): DownloadResult {
         try {
+            printErrorLog("donwloading file name: $mediaName")
             val url = URL(urlString)
             val urlConnection: URLConnection = url.openConnection()
             urlConnection.connect()
@@ -37,7 +38,6 @@ class DownloadManager @Inject constructor(@ApplicationContext val context: Conte
                 progress = current * 100 / total
                 if (progressForCheck != progress) {
                     progressForCheck = progress
-                    printLog("downloading $progress")
                 }
                 output.write(data, 0, count)
             }

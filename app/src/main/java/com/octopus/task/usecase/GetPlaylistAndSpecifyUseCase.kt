@@ -20,6 +20,8 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
     private val downloadManager: DownloadManager
 ) {
 
+    private var currentDownloadIndex = 0
+
     private suspend fun getPlayList() {
         val resource = commonRepository.getPlaylistFromServer()
         if (resource is Resource.Success<*>) {
@@ -40,6 +42,10 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
                 sync?.command_id?.let { safeCommandId ->
                     commonRepository.specify(SpecifyBodyModel(safeCommandId.toString()))
                 }
+            }
+
+            report?.command_id?.let { safeReportCommandId ->
+                commonRepository.specify(SpecifyBodyModel(safeReportCommandId.toString()))
             }
         }
     }
@@ -62,7 +68,6 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
 
     private suspend fun downloadMedias(dataItemList: List<DataItem>) {
         val didNotDownloadedList = mutableListOf<DataItem>()
-        var currentDownloadIndex = 0
         val dataItem = dataItemList[currentDownloadIndex]
         currentDownloadIndex++
         suspend fun goNextDownload() {
@@ -107,6 +112,7 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
     }
 
     private suspend fun updateDbData(dataListForInsert: List<DataItem>) {
+        printErrorLog("inserted to db list: $dataListForInsert")
         commonRepository.deletePlaylistFromDB()
         commonRepository.insertPlaylistToDb(dataListForInsert)
     }

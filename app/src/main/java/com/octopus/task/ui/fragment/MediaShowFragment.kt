@@ -38,22 +38,24 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
         super.subLivData()
         mViewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             printErrorLog("playlist order: ${preferencesHelper.playlistOrder} video order: ${preferencesHelper.videoOrder}")
+            printErrorLog("playlist: $playlist")
             val currentItem = playlist[preferencesHelper.playlistOrder]
-            if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
-                preferencesHelper.playlistOrder = 0
-            } else {
-                preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
-            }
-            currentItem.end_date?.let { safeEndDate ->
+            printErrorLog("current item: $currentItem")
+            playMedia(currentItem, playlist)
+            /*currentItem.end_date?.let { safeEndDate ->
                 currentItem.start_date?.let { safeStartDate ->
-                    if (mViewModel.isItemInInterval(safeStartDate, safeEndDate)) playMedia(currentItem, playlist)
-                    else mViewModel.getPlaylistFromDb()
+                    if (mViewModel.isItemInInterval(safeStartDate, safeEndDate)){
+                        playMedia(currentItem, playlist)
+                    }
+                    else {
+                        mViewModel.getPlaylistFromDb()
+                    }
                 } ?: kotlin.run {
                     playMedia(currentItem, playlist)
                 }
             } ?: kotlin.run {
                 playMedia(currentItem, playlist)
-            }
+            }*/
         }
     }
 
@@ -82,12 +84,18 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             }
         }
         postRunnable({
+            if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
+                preferencesHelper.playlistOrder = 0
+            } else {
+                preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
+            }
             mViewModel.getPlaylistFromDb()
         }, 10 * 1000)
     }
 
     private fun playVideoByOrder(videoCount: Int) {
         mExoPlayer?.seekTo(preferencesHelper.videoOrder, C.TIME_UNSET)
+        mExoPlayer?.play()
         if (preferencesHelper.videoOrder + 1 >= videoCount) {
             preferencesHelper.videoOrder = 0
         } else {
@@ -100,29 +108,25 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             mExoPlayer = ExoPlayer.Builder(safeContext).build()
             mExoPlayer?.let { safeExoPlayer ->
                 binding.playerView.player = safeExoPlayer
-                safeExoPlayer.addListener(object : Player.Listener {
-                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        if (playbackState == Player.STATE_READY) {
-                            playVideoByOrder(videoCount)
+                val mediaItems = mutableListOf<MediaItem>()
+                playlist.forEach { playlistItem ->
+                    if (playlistItem.type == VIDEO_TYPE) {
+                        playlistItem.name?.let { safeName ->
+                            val file =
+                                File(requireContext().filesDir.toString() + "/MediaFiles/$safeName")
+                            val uri = Uri.fromFile(file)
+                            mediaItems.add(MediaItem.fromUri(uri))
                         }
                     }
-                })
-            }
-            val mediaItems = mutableListOf<MediaItem>()
-            playlist.forEach { playlistItem ->
-                if (playlistItem.type == VIDEO_TYPE) {
-                    playlistItem.name?.let { safeName ->
-                        mediaItems.add(MediaItem.fromUri(Uri.fromFile(File(safeContext.filesDir, safeName))))
-                    }
                 }
+                val mediaSources = mediaItems.map {
+                    ProgressiveMediaSource.Factory(DefaultDataSource.Factory(requireContext())).createMediaSource(it)
+                }
+                val concatenatedSource = ConcatenatingMediaSource(*mediaSources.toTypedArray())
+                safeExoPlayer.setMediaSource(concatenatedSource)
+                safeExoPlayer.prepare()
+                playVideoByOrder(videoCount)
             }
-            val mediaSources = mediaItems.map {
-                ProgressiveMediaSource.Factory(DefaultDataSource.Factory(requireContext())).createMediaSource(it)
-            }
-
-            val concatenatedSource = ConcatenatingMediaSource(*mediaSources.toTypedArray())
-            mExoPlayer?.setMediaSource(concatenatedSource)
-            mExoPlayer?.prepare()
         }
     }
 
