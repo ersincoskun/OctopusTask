@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.remote.ApiInterface
-import com.octopus.task.repo.SplashRepository
-import com.octopus.task.repo.SplashRepository_Impl
+import com.octopus.task.repo.CommonRepository
+import com.octopus.task.repo.CommonRepository_Impl
 import com.octopus.task.storage.dao.PlaylistDAO
 import com.octopus.task.storage.database.PlaylistDB
 import com.octopus.task.utils.Constants.BASE_URL
@@ -48,12 +48,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun SplashRepositoryProvider(
+    fun CommonRepositoryProvider(
         @ApplicationContext context: Context,
         retrofitAPI: ApiInterface,
         playlistDao: PlaylistDAO,
         preferencesHelper: PreferencesHelper,
-    ): SplashRepository = SplashRepository_Impl(
+    ): CommonRepository = CommonRepository_Impl(
         context,
         retrofitAPI,
         playlistDao,

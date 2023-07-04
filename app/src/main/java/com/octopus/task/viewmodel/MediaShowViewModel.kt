@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.model.DataItem
-import com.octopus.task.repo.SplashRepository
+import com.octopus.task.repo.CommonRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class MediaShowViewModel
 @Inject constructor(
     val preferencesHelper: PreferencesHelper,
-    private val splashRepository: SplashRepository
+    private val commonRepository: CommonRepository
 ) : ViewModel() {
 
     private val _playlist = MutableLiveData<List<DataItem>>()
@@ -28,7 +28,7 @@ class MediaShowViewModel
 
     fun getPlaylistFromDb() {
         viewModelScope.launch(Dispatchers.IO) {
-            val playlist = splashRepository.getPlaylistFromDb()
+            val playlist = commonRepository.getPlaylistFromDb()
             withContext(Dispatchers.Main) {
                 _playlist.value = playlist
             }

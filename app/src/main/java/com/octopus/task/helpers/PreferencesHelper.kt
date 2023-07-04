@@ -14,6 +14,7 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
 
     companion object {
         const val PLAYLIST_ORDER = "PLAYLIST_ORDER"
+        const val VIDEO_PLAYLIST_ORDER = "VIDEO_PLAYLIST_ORDER"
         const val DEVICE_ID = "DEVICE_ID"
     }
 
@@ -47,7 +48,6 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
             Int::class.java -> sharedPreferences.getInt(key, defaultInt)
             Float::class.java -> sharedPreferences.getFloat(key, defaultFloat)
             Boolean::class.java -> sharedPreferences.getBoolean(key, defaultBoolean)
-            //Collections::class.java -> sharedPreferences.getStringSet(key, null)
             else -> {
                 println("out of type")
                 Log.e("TAG", "shared preferences out of type")
@@ -84,10 +84,16 @@ class PreferencesHelper @Inject constructor(@ApplicationContext var context: Con
     var playlistOrder: Int
         get() = getSharedPrefsValue(
             PLAYLIST_ORDER,
-            Int::class.java,
-            defaultInt = 0
+            Int::class.java
         ) as Int
         set(value) = savePrefValue(PLAYLIST_ORDER, value)
+
+    var videoPlaylistOrder: Int
+        get() = getSharedPrefsValue(
+            VIDEO_PLAYLIST_ORDER,
+            Int::class.java
+        ) as Int
+        set(value) = savePrefValue(VIDEO_PLAYLIST_ORDER, value)
 
     var deviceId: String
         get() = getSharedPrefsValue(

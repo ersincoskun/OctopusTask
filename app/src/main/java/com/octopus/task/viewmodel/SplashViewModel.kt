@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.octopus.task.helpers.PreferencesHelper
-import com.octopus.task.repo.SplashRepository
+import com.octopus.task.repo.CommonRepository
 import com.octopus.task.usecase.GetPlaylistAndSpecifyUseCase
 import com.octopus.task.usecase.UseCaseResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,28 +16,28 @@ import kotlin.random.Random
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     val preferencesHelper: PreferencesHelper,
-    private val splashRepository: SplashRepository,
+    private val commonRepository: CommonRepository,
     private val getPlaylistAndSpecifyUseCase: GetPlaylistAndSpecifyUseCase
 ) : ViewModel() {
 
-    private lateinit var job: Job
+    private lateinit var mJob: Job
 
     private val _isReadyToStart = MutableLiveData<Boolean>()
     val isReadyToStart: LiveData<Boolean>
         get() = _isReadyToStart
 
-    fun checkIsReadyToPlay() {
+    private fun checkIsReadyToPlay() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = getPlaylistAndSpecifyUseCase()
             if (result == UseCaseResult.Success) {
-                val playlist = splashRepository.getPlaylistFromDb()
+                val playlist = commonRepository.getPlaylistFromDb()
                 _isReadyToStart.value = playlist.isNotEmpty()
             }
         }
     }
 
     fun startRequestLoop() {
-        job = viewModelScope.launch(Dispatchers.Main) {
+        mJob = viewModelScope.launch(Dispatchers.Main) {
             while (isActive) {
                 delay(5 * 1000)
                 checkIsReadyToPlay()
@@ -46,7 +46,7 @@ class SplashViewModel @Inject constructor(
     }
 
     fun stopRequestLoop(){
-        job.cancel()
+        mJob.cancel()
     }
 
     fun generateAlphaNumericId(): String {

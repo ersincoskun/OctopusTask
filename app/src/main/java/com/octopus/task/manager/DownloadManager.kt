@@ -49,15 +49,15 @@ class DownloadManager @Inject constructor(@ApplicationContext val context: Conte
             return DownloadResult.Successful
         } catch (e: Exception) {
             printErrorLog("Download exception: $e")
-            return DownloadResult.Exception
+            return DownloadResult.Fail
         } catch (e: IOException) {
             printErrorLog("Download exception: $e")
-            return DownloadResult.Exception
+            return DownloadResult.Fail
         }
     }
 
     sealed class DownloadResult {
         object Successful : DownloadResult()
-        object Exception : DownloadResult()
+        object Fail : DownloadResult()
     }
 }

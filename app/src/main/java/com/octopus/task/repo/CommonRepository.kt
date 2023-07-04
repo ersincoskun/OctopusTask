@@ -5,7 +5,7 @@ import com.octopus.task.model.SpecifyBodyModel
 import com.octopus.task.utils.Resource
 
 
-interface SplashRepository {
+interface CommonRepository {
     suspend fun getPlaylistFromDb(): List<DataItem>
     suspend fun specify(specifyBodyModel: SpecifyBodyModel):Resource
     suspend fun getPlaylistFromApi(): Resource

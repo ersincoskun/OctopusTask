@@ -14,8 +14,10 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/*CheckPlaylistUpdateWorker checks is there any new playlist and if there is it download new playlist
-and insert to sqlite*/
+/*
+CheckPlaylistUpdateWorker checks is there any new playlist and if there is it download new playlist
+and insert to sqlite
+*/
 @HiltWorker
 class CheckPlaylistUpdateWorker @AssistedInject constructor(
     @Assisted appContext: Context,

@@ -6,7 +6,7 @@ import com.octopus.task.manager.DownloadManager
 import com.octopus.task.model.DataItem
 import com.octopus.task.model.ResponseModel
 import com.octopus.task.model.SpecifyBodyModel
-import com.octopus.task.repo.SplashRepository
+import com.octopus.task.repo.CommonRepository
 import com.octopus.task.utils.Resource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -17,18 +17,18 @@ import javax.inject.Inject
 
 class GetPlaylistAndSpecifyUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val splashRepository: SplashRepository,
+    private val commonRepository: CommonRepository,
     private val downloadManager: DownloadManager
 ) {
 
     private suspend fun getPlayList() {
-        val resource = splashRepository.getPlaylistFromApi()
+        val resource = commonRepository.getPlaylistFromApi()
         if (resource is Resource.Success<*>) {
             val response = resource.data as ResponseModel
             response.params?.first()?.sync?.data?.let { safeDataList ->
                 handleGetPlaylistResponse(safeDataList)
                 response.params.first().sync?.command_id?.let { safeCommandId ->
-                    splashRepository.specify(SpecifyBodyModel(safeCommandId.toString()))
+                    commonRepository.specify(SpecifyBodyModel(safeCommandId.toString()))
                 }
             }
         }
@@ -81,7 +81,7 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
                 val url = "https://octopus-panel-case.azurewebsites.net/uploads/${dataItem.name}"
                 val downloadResult =
                     downloadManager.downloadMedia(url, dataItem.name)
-                if (downloadResult == DownloadManager.DownloadResult.Exception) didNotDownloadedList.add(dataItem)
+                if (downloadResult == DownloadManager.DownloadResult.Fail) didNotDownloadedList.add(dataItem)
                 goNextDownload()
             } catch (e: Exception) {
                 didNotDownloadedList.add(dataItem)
@@ -96,8 +96,8 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
     }
 
     private suspend fun updateDbData(dataListForInsert: List<DataItem>) {
-        splashRepository.deletePlaylistFromDB()
-        splashRepository.insertPlaylistToDb(dataListForInsert)
+        commonRepository.deletePlaylistFromDB()
+        commonRepository.insertPlaylistToDb(dataListForInsert)
     }
 
     private fun getDownloadedFiles(context: Context): List<String> {
@@ -117,8 +117,4 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         getPlayList()
         UseCaseResult.Success
     }
-}
-
-enum class UseCaseResult {
-    Success
 }

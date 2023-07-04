@@ -11,12 +11,12 @@ import com.octopus.task.utils.printErrorLog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class SplashRepository_Impl @Inject constructor(
+class CommonRepository_Impl @Inject constructor(
     @ApplicationContext val context: Context,
     val retrofitApi: ApiInterface,
     val playlistDao: PlaylistDAO,
     val preferencesHelper: PreferencesHelper,
-) : SplashRepository {
+) : CommonRepository {
     override suspend fun getPlaylistFromApi(): Resource {
         return try {
             val response = retrofitApi.getPlaylist(preferencesHelper.deviceId)

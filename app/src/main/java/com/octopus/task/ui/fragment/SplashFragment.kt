@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     @Inject
-    private lateinit var preferencesHelper: PreferencesHelper
+    lateinit var preferencesHelper: PreferencesHelper
     private val viewModel: SplashViewModel by viewModels()
 
     override fun subLivData() {

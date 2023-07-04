@@ -9,12 +9,16 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.octopus.task.base.BaseFragment
 import com.octopus.task.databinding.FragmentMediaShowBinding
+import com.octopus.task.helpers.PreferencesHelper
 import com.octopus.task.viewmodel.MediaShowViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
 
+    @Inject
+    lateinit var preferencesHelper: PreferencesHelper
     private var exoPlayer: ExoPlayer? = null
     private val viewModel: MediaShowViewModel by viewModels()
 
