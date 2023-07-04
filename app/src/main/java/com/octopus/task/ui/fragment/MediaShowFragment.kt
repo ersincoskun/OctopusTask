@@ -1,6 +1,7 @@
 package com.octopus.task.ui.fragment
 
 import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
@@ -9,7 +10,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
@@ -74,7 +74,25 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             val videoCount = playlist.count { it.type == VIDEO_TYPE }
             binding.playerView.show()
             binding.imageView.remove()
-            prepareExoPlayer(playlist, videoCount)
+            prepareExoPlayer(playlist)
+            val retriever = MediaMetadataRetriever()
+            val videoPath = requireContext().filesDir.toString() + "/MediaFiles/${currentItem.name}"
+            retriever.setDataSource(videoPath)
+            val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            val timeInMilliSec = time?.toLong()
+            postRunnable({
+                if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
+                    preferencesHelper.playlistOrder = 0
+                } else {
+                    preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
+                }
+                if (preferencesHelper.videoOrder + 1 >= videoCount) {
+                    preferencesHelper.videoOrder = 0
+                } else {
+                    preferencesHelper.videoOrder = preferencesHelper.videoOrder + 1
+                }
+                mViewModel.getPlaylistFromDb()
+            }, timeInMilliSec ?: (10 * 1000))
         } else {
             releasePlayer()
             binding.playerView.remove()
@@ -82,28 +100,23 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
             currentItem.name?.let { safeImageName ->
                 loadImageByFileName(safeImageName)
             }
+            postRunnable({
+                if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
+                    preferencesHelper.playlistOrder = 0
+                } else {
+                    preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
+                }
+                mViewModel.getPlaylistFromDb()
+            }, 10 * 1000)
         }
-        postRunnable({
-            if (preferencesHelper.playlistOrder + 1 >= playlist.size) {
-                preferencesHelper.playlistOrder = 0
-            } else {
-                preferencesHelper.playlistOrder = preferencesHelper.playlistOrder + 1
-            }
-            mViewModel.getPlaylistFromDb()
-        }, 10 * 1000)
     }
 
-    private fun playVideoByOrder(videoCount: Int) {
+    private fun playVideoByOrder() {
         mExoPlayer?.seekTo(preferencesHelper.videoOrder, C.TIME_UNSET)
         mExoPlayer?.play()
-        if (preferencesHelper.videoOrder + 1 >= videoCount) {
-            preferencesHelper.videoOrder = 0
-        } else {
-            preferencesHelper.videoOrder = preferencesHelper.videoOrder + 1
-        }
     }
 
-    private fun prepareExoPlayer(playlist: List<DataItem>, videoCount: Int) {
+    private fun prepareExoPlayer(playlist: List<DataItem>) {
         context?.let { safeContext ->
             mExoPlayer = ExoPlayer.Builder(safeContext).build()
             mExoPlayer?.let { safeExoPlayer ->
@@ -125,7 +138,7 @@ class MediaShowFragment : BaseFragment<FragmentMediaShowBinding>() {
                 val concatenatedSource = ConcatenatingMediaSource(*mediaSources.toTypedArray())
                 safeExoPlayer.setMediaSource(concatenatedSource)
                 safeExoPlayer.prepare()
-                playVideoByOrder(videoCount)
+                playVideoByOrder()
             }
         }
     }

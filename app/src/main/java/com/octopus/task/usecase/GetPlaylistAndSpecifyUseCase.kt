@@ -115,6 +115,23 @@ class GetPlaylistAndSpecifyUseCase @Inject constructor(
         printErrorLog("inserted to db list: $dataListForInsert")
         commonRepository.deletePlaylistFromDB()
         commonRepository.insertPlaylistToDb(dataListForInsert)
+        getDownloadedFiles(context).forEach { downloadedFile ->
+            var flag = false
+            dataListForInsert.forEach { dataListItem ->
+                if (downloadedFile == dataListItem.name) flag = true
+            }
+            if (!flag) deleteFile(downloadedFile)
+        }
+    }
+
+    private fun deleteFile(fileName: String) {
+        val file = File(context.filesDir, "MediaFiles/$fileName")
+        val fileDeleted = file.delete()
+        if (!fileDeleted) {
+            printErrorLog("file not Deleted :$fileName")
+        } else {
+            printErrorLog("file Deleted :$fileName")
+        }
     }
 
     private fun getDownloadedFiles(context: Context): List<String> {
